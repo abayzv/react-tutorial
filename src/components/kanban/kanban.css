@@ -1,0 +1,120 @@
+.kanban-container .kanban-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  height: 50px;
+}
+.kanban-container .kanban-header .title, .kanban-container .kanban-header .org {
+  font-size: 18px;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.212);
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+}
+.kanban-container .kanban-body {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: flex-start;
+}
+
+.board-container {
+  padding: 1rem;
+  background-color: rgb(247, 252, 255);
+  flex: 0 0 20%;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.board-container .board-header .title {
+  font-size: 18px;
+  font-weight: 700;
+}
+.board-container .board-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.board-container .board-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.board-container .board-footer .add-task {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  color: gray;
+  padding: 0;
+  font-size: 16px;
+}
+.board-container .board-footer .add-task.submit {
+  background-color: #0079bf;
+  width: auto;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  margin-right: 1rem;
+}
+.board-container .board-footer .add-task.cancel {
+  color: #0079bf;
+}
+
+.task-container {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.13), 0 1px 1px 0 rgba(9, 30, 66, 0.13);
+  cursor: pointer;
+}
+.task-container.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+.task-container.empty {
+  background-color: transparent;
+  box-shadow: none;
+  border: 2px dashed rgba(9, 30, 66, 0.13);
+  padding: 2rem;
+  text-align: center;
+  color: rgba(9, 30, 66, 0.13);
+  cursor: pointer;
+}
+.task-container .description {
+  font-size: 14px;
+  color: rgba(9, 30, 66, 0.6);
+}
+
+.input-task {
+  padding: 0.5rem;
+  background-color: transparent;
+  box-shadow: none;
+  border: 2px dashed rgba(9, 30, 66, 0.13);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.input-task input {
+  border: 1px solid rgba(9, 30, 66, 0.13);
+  padding: 1rem;
+  font-size: 14px;
+  outline: none;
+  border-radius: 5px;
+}
+.input-task button {
+  border: none;
+  background-color: #0079bf;
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.input-task button:hover {
+  background-color: #005a8d;
+}/*# sourceMappingURL=kanban.css.map */
