@@ -107,3 +107,19 @@ main{
         z-index: -1;
     }
 }
+
+@for $i from 1 through 10 {
+    .ml-#{$i} { margin-left: #{$i*.5}rem; }
+    .mr-#{$i} { margin-right: #{$i*.5}rem; }
+    .mt-#{$i} { margin-top: #{$i*.5}rem; }
+    .mb-#{$i} { margin-bottom: #{$i*.5}rem; }
+    .my-#{$i} { margin-top: #{$i*.5}rem; margin-bottom: #{$i*.5}rem; }
+    .mx-#{$i} { margin-left: #{$i*.5}rem; margin-right: #{$i*.5}rem; }
+    .pl-#{$i} { padding-left: #{$i*.5}rem; }
+    .pr-#{$i} { padding-right: #{$i*.5}rem; }
+    .pt-#{$i} { padding-top: #{$i*.5}rem; }
+    .pb-#{$i} { padding-bottom: #{$i*.5}rem; }
+    .py-#{$i} { padding-top: #{$i*.5}rem; padding-bottom: #{$i*.5}rem; }
+    .px-#{$i} { padding-left: #{$i*.5}rem; padding-right: #{$i*.5}rem; }
+    .gap-#{$i} { gap: #{$i *.5}rem; }
+}

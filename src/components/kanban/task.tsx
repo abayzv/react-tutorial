@@ -3,9 +3,15 @@ import { KanbanContext, Task as TaskInterface } from "../../stores/kanban";
 
 const Task = ({ taskData, boardId, index }: { taskData: TaskInterface, boardId: number, index: number }) => {
     index;
-    const { editor, deleteTask } = React.useContext(KanbanContext);
+    const { editor, deleteTask, labels } = React.useContext(KanbanContext);
+
+    const [labelState] = labels;
     const [editorState, setEditorState] = editor;
     const [isDragging, setIsDragging] = React.useState(false);
+
+    const getLabel = (id: number) => {
+        return labelState.find(label => label.id === id);
+    }
 
     const dragStart = () => {
         setEditorState({ ...editorState, cardId: taskData.id, fromBoardId: boardId });
@@ -42,7 +48,14 @@ const Task = ({ taskData, boardId, index }: { taskData: TaskInterface, boardId: 
             onDragOver={dragOver}
         >
             <button className="delete-task" onClick={() => deleteTask(boardId, taskData.id)}>x</button>
-            <div>{taskData.title} {isDragging ? '👀' : ''}</div>
+            <div className="task-label">
+                {taskData.labels?.map((label, index) => {
+                    return (
+                        <div key={index} className="task-label-item" style={{ backgroundColor: getLabel(label)?.color }}></div>
+                    )
+                })}
+            </div>
+            <div className="mt-1">{taskData.title} {isDragging ? '👀' : ''}</div>
             <div className="description">{taskData.description}</div>
         </div>
     )

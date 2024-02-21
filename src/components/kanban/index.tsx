@@ -13,6 +13,20 @@ import { FaTrash, FaTags } from "react-icons/fa";
 import { ImBoxRemove } from "react-icons/im";
 import { RiAttachment2 } from "react-icons/ri";
 import { IoDuplicate } from "react-icons/io5";
+import Dropdown from "../dropdown/dropdown";
+import ManageLabels from "../kanban/manageLabels";
+
+const styles = {
+    select: {
+        marginTop: '0.5rem',
+        width: '100%',
+        padding: '0.5rem',
+        border: '#aeaeae 1px solid',
+        borderRadius: '5px',
+        backgroundColor: '#f2f2f2',
+        outline: 'none',
+    }
+}
 
 const formatDate = (date: string) => {
     const d = new Date(date);
@@ -20,11 +34,24 @@ const formatDate = (date: string) => {
 }
 
 const Kanban = () => {
-    const { kanban, detail, getTaskDetail, resetDetail, updateTask } = React.useContext(KanbanContext);
+    const { kanban, detail, getTaskDetail, resetDetail, updateTask, moveTask, labels } = React.useContext(KanbanContext);
+
+    const [labelState] = labels;
     const [kanbanState] = kanban;
     const [detailState, setDetailState] = detail;
     const { boards } = kanbanState;
     const [showModal, setShowModal] = React.useState(false);
+
+    const moveTaskTo = (boardId: number) => {
+        console.log('move task to', boardId);
+        const fromBoardId = boards.find(board => board.name === detailState.status)?.id;
+        if (!fromBoardId) return;
+        moveTask(fromBoardId, boardId, detailState.id);
+    };
+
+    const getLabel = (id: number) => {
+        return labelState.find(label => label.id === id);
+    }
 
     const renderTasks = (tasks: Array<TaskInterface>, boardId: number) => {
 
@@ -70,6 +97,26 @@ const Kanban = () => {
         });
     }
 
+    const renderMoveTo = () => {
+        return (
+            <>
+                <div>Move task to</div>
+                <select style={styles.select} onChange={(e) => moveTaskTo(parseInt(e.target.value))}>
+                    <option value={0}>Select Board</option>
+                    {boards.map((board, index) => {
+                        if (board.name === detailState.status) return null;
+
+                        return (
+                            <option key={index} value={board.id}>
+                                {board.name}
+                            </option>
+                        );
+                    })}
+                </select>
+            </>
+        )
+    }
+
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDetailState({ ...detailState, description: e.target.value });
     }
@@ -105,6 +152,17 @@ const Kanban = () => {
                                 <div className='title'>{detailState.title}</div>
                                 <div className="detail-status">in list <span style={{ textDecoration: 'underline' }}>{detailState.status}</span></div>
                             </div>
+                            {detailState.labels && (
+                                <div className="label-detail">
+                                    {detailState.labels.map((label, index) => {
+                                        return (
+                                            <div key={index} className="label-detail-item" style={{ backgroundColor: getLabel(label)?.color }}>{getLabel(label)?.name}</div>
+                                        );
+                                    }
+                                    )}
+                                </div>
+                            )
+                            }
                         </div>
                         <div className="section">
                             <FaAlignLeft className="icon" />
@@ -129,8 +187,17 @@ const Kanban = () => {
                     </div>
                     <div className="task-sidebar">
                         <button className="btn"><FaTrash /> Delete</button>
-                        <button className="btn"><ImBoxRemove /> Move To</button>
-                        <button className="btn"><FaTags /> Labels</button>
+
+                        {/* Move To */}
+                        <Dropdown className="btn" title="Move To" icon={<ImBoxRemove />}>
+                            {renderMoveTo()}
+                        </Dropdown>
+
+                        {/* Labels */}
+                        <Dropdown className="btn" title="Labels" icon={<FaTags />}>
+                            <ManageLabels />
+                        </Dropdown>
+
                         <button className="btn"><RiAttachment2 /> Attachments</button>
                         <button className="btn"><IoDuplicate /> Duplicate</button>
                     </div>

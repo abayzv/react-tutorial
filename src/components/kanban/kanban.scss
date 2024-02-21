@@ -162,6 +162,7 @@
 
 .task-detail{
     width: 600px;
+    min-height: 600px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -201,6 +202,15 @@
             display: flex;
             flex-direction: column;
             gap: .5rem;
+            max-height: 200px;
+            overflow-y: auto;
+
+            // hide scrollbar
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            &::-webkit-scrollbar {
+                display: none;
+            }
 
             .activity-item {
                 background-color: rgb(255, 249, 171);
@@ -257,6 +267,24 @@
         }
     }
 
+    .label-detail {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+
+        .label-detail-item {
+            min-height: 20px;
+            border-radius: 50px;
+            padding: .5rem 1rem;
+            font-size: 14px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+        }
+    }
+
 }
 
 .task-sidebar {
@@ -283,4 +311,75 @@
             background-color: #005a8d;
         }
     }
+}
+
+.task-label{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+
+    .task-label-item {
+        border-radius: 50px;
+        padding: .5rem 1rem;
+    }
+
+}
+
+.labels {
+
+    .label-list {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
+
+    .label-item {
+        min-height: 20px;
+        border-radius: 5px;
+        padding: .5rem;
+        display: flex;
+        align-items: center;
+        color: white;
+        cursor: pointer;
+    }
+
+    input {
+        padding: 1rem;
+        border: 1px solid rgba(9, 30, 66, 0.13);
+        background-color: rgba(252, 252, 252, 0.123);
+        border-radius: 5px;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .color-picker {
+        display: grid;
+        grid-template-columns: repeat(5, 20%);
+
+        .color {
+            width: 100%;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+    }
+
+    .label-picker {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+
+        .label-item  {
+            width: 100%;
+        }
+
+        input {
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(9, 30, 66, 0.13);
+            border-radius: 5px;
+        }
+    }
+
 }

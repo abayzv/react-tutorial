@@ -1,6 +1,12 @@
 import React from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 
+export interface Labels {
+    id: number;
+    name: string;
+    color: string;
+}
+
 export interface Activity {
     id: number;
     title: string;
@@ -14,6 +20,7 @@ export interface Task {
     description?: string;
     status: string;
     activity?: Activity[];
+    labels?: Array<number>;
 }
 
 export interface Board {
@@ -40,6 +47,8 @@ interface KanbanContext {
     kanban: [Kanban, React.Dispatch<React.SetStateAction<Kanban>>];
     detail: [Task, React.Dispatch<React.SetStateAction<Task>>];
     editor: [Editor, React.Dispatch<React.SetStateAction<Editor>>];
+    labels: [Labels[], React.Dispatch<React.SetStateAction<Labels[]>>];
+    labelColors: string[];
     addBoard: (board: Board) => void;
     deleteBoard: (boardId: number) => void;
     addTask: (boardId: number, task: Task) => void;
@@ -50,6 +59,7 @@ interface KanbanContext {
     getTaskDetail: (taskId: number) => Task;
     resetDetail: () => void;
     updateTask: () => void;
+    editLabelOnTask: (label: Labels, isEnable: boolean) => void;
 }
 
 export const KanbanContext: React.Context<KanbanContext> = React.createContext({} as KanbanContext);
@@ -104,9 +114,39 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
             }
         ]
     }
+    const labelColors = [
+        "#FF6EC7",
+        "#39FF14",
+        "#DFFF00",
+        "#00FFFF",
+        "#FFD700",
+        "#FF00FF",
+        "#00FF7F",
+        "#FFA500",
+        "#FF6347",
+        "#7FFF00"
+    ]
+    const labelsData: Labels[] = [
+        {
+            id: 1,
+            name: 'Bug',
+            color: labelColors[0],
+        },
+        {
+            id: 2,
+            name: 'Feature',
+            color: labelColors[1],
+        },
+        {
+            id: 3,
+            name: 'Enhancement',
+            color: labelColors[2],
+        }
+    ];
 
+    const [labels, setLabels] = useLocalStorage('labels', labelsData) as [Array<Labels>, React.Dispatch<React.SetStateAction<Array<Labels>>>];
     const [kanban, setKanban] = useLocalStorage('kanban', kanbanData) as [Kanban, React.Dispatch<React.SetStateAction<Kanban>>];
-    const [detail, setDetail] = React.useState({ id: 0, title: '', description: '', status: '', activity: [] } as Task);
+    const [detail, setDetail] = React.useState({ id: 0, title: '', description: '', status: '', activity: [], labels: [] } as Task);
     const [editor, setEditor] = React.useState({ cardId: 0, fromBoardId: 0, toBoardId: 0 });
 
     const addBoard = (board: Board) => {
@@ -279,13 +319,44 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         setKanban({ ...kanban, boards });
-        alert('Task updated');
+    }
+
+    const updateTaskItem = (task: Task) => {
+        const boards = kanban.boards;
+
+        for (let i = 0; i < boards.length; i++) {
+            const tasks = boards[i].tasks;
+            for (let j = 0; j < tasks.length; j++) {
+                if (tasks[j].id === task.id) {
+                    tasks[j] = task;
+                }
+            }
+        }
+
+        setKanban({ ...kanban, boards });
+    }
+
+    const editLabelOnTask = (label: Labels, isEnable: boolean) => {
+        const task = { ...detail };
+        if (isEnable) {
+            if (task.labels) {
+                task.labels.push(label.id);
+            } else {
+                task.labels = [label.id];
+            }
+        } else {
+            task.labels = task.labels?.filter(id => id !== label.id);
+        }
+        setDetail(task);
+        updateTaskItem(task);
     }
 
     const storeKanban: KanbanContext = {
         kanban: [kanban, setKanban],
+        labels: [labels, setLabels],
         detail: [detail, setDetail],
         editor: [editor, setEditor],
+        labelColors,
         addBoard,
         deleteBoard,
         addTask,
@@ -295,7 +366,8 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         removeEmptyTask,
         getTaskDetail,
         resetDetail,
-        updateTask
+        updateTask,
+        editLabelOnTask
     }
 
     return (
