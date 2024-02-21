@@ -1,11 +1,19 @@
 import React from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 
+export interface Activity {
+    id: number;
+    title: string;
+    description: string;
+    date: string;
+}
+
 export interface Task {
     id: number;
     title: string;
     description?: string;
     status: string;
+    activity?: Activity[];
 }
 
 export interface Board {
@@ -30,6 +38,7 @@ interface Editor {
 
 interface KanbanContext {
     kanban: [Kanban, React.Dispatch<React.SetStateAction<Kanban>>];
+    detail: [Task, React.Dispatch<React.SetStateAction<Task>>];
     editor: [Editor, React.Dispatch<React.SetStateAction<Editor>>];
     addBoard: (board: Board) => void;
     deleteBoard: (boardId: number) => void;
@@ -38,6 +47,9 @@ interface KanbanContext {
     moveTask: (fromBoardId: number, toBoardId: number, taskId: number, taskTargetId?: number) => void;
     addEmptyTask: (boardId: number, index: number) => void;
     removeEmptyTask: (boardId: number) => void;
+    getTaskDetail: (taskId: number) => Task;
+    resetDetail: () => void;
+    updateTask: () => void;
 }
 
 export const KanbanContext: React.Context<KanbanContext> = React.createContext({} as KanbanContext);
@@ -94,6 +106,7 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const [kanban, setKanban] = useLocalStorage('kanban', kanbanData) as [Kanban, React.Dispatch<React.SetStateAction<Kanban>>];
+    const [detail, setDetail] = React.useState({ id: 0, title: '', description: '', status: '', activity: [] } as Task);
     const [editor, setEditor] = React.useState({ cardId: 0, fromBoardId: 0, toBoardId: 0 });
 
     const addBoard = (board: Board) => {
@@ -149,8 +162,10 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         const fromBoard = kanban.boards.find(board => board.id === fromBoardId);
         const toBoard = kanban.boards.find(board => board.id === toBoardId);
         if (fromBoard && toBoard) {
+            const toBoardStatus = toBoard.name
             const task = fromBoard.tasks.find(task => task.id === taskId);
             if (task) {
+                task.status = toBoardStatus;
                 const newFromBoard = { ...fromBoard, tasks: fromBoard.tasks.filter(task => task.id !== taskId) };
                 const newToBoard = { ...toBoard, tasks: [...toBoard.tasks, task] };
                 const newBoards = kanban.boards.map(board => {
@@ -208,7 +223,6 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
             }
         }
     }
-
     const removeEmptyTask = (boardId: number) => {
         const board = kanban.boards.find(board => board.id === boardId);
         if (board) {
@@ -223,9 +237,54 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
             setKanban({ ...kanban, boards: newBoards });
         }
     }
+    const getTaskDetail = (taskId: number) => {
+        const boards = kanban.boards;
+        for (let i = 0; i < boards.length; i++) {
+            const tasks = boards[i].tasks;
+            for (let j = 0; j < tasks.length; j++) {
+                if (tasks[j].id === taskId) {
+                    setDetail(tasks[j]);
+                }
+            }
+        }
+
+        return detail;
+    }
+    const resetDetail = () => {
+        setDetail({ id: 0, title: '', description: '', status: '' });
+    }
+    const updateTask = () => {
+        const task = detail;
+        const boards = kanban.boards;
+
+        const activity = {
+            id: Math.floor(Math.random() * 1000),
+            title: `Task updated`,
+            description: `Task ${task.id} updated in ${task.status}`,
+            date: new Date().toISOString(),
+        }
+
+        for (let i = 0; i < boards.length; i++) {
+            const tasks = boards[i].tasks;
+            for (let j = 0; j < tasks.length; j++) {
+                if (tasks[j].id === task.id) {
+                    if (task.activity) {
+                        task.activity.push(activity);
+                    } else {
+                        task.activity = [activity];
+                    }
+                    tasks[j] = task;
+                }
+            }
+        }
+
+        setKanban({ ...kanban, boards });
+        alert('Task updated');
+    }
 
     const storeKanban: KanbanContext = {
         kanban: [kanban, setKanban],
+        detail: [detail, setDetail],
         editor: [editor, setEditor],
         addBoard,
         deleteBoard,
@@ -233,7 +292,10 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         deleteTask,
         moveTask,
         addEmptyTask,
-        removeEmptyTask
+        removeEmptyTask,
+        getTaskDetail,
+        resetDetail,
+        updateTask
     }
 
     return (

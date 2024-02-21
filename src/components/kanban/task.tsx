@@ -3,8 +3,7 @@ import { KanbanContext, Task as TaskInterface } from "../../stores/kanban";
 
 const Task = ({ taskData, boardId, index }: { taskData: TaskInterface, boardId: number, index: number }) => {
     index;
-    const { editor } = React.useContext(KanbanContext);
-
+    const { editor, deleteTask } = React.useContext(KanbanContext);
     const [editorState, setEditorState] = editor;
     const [isDragging, setIsDragging] = React.useState(false);
 
@@ -42,6 +41,7 @@ const Task = ({ taskData, boardId, index }: { taskData: TaskInterface, boardId: 
             onDragEnd={dragEnd}
             onDragOver={dragOver}
         >
+            <button className="delete-task" onClick={() => deleteTask(boardId, taskData.id)}>x</button>
             <div>{taskData.title} {isDragging ? '👀' : ''}</div>
             <div className="description">{taskData.description}</div>
         </div>

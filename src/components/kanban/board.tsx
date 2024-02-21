@@ -1,5 +1,6 @@
 import React from 'react';
 import { Board as BoardInterface, KanbanContext } from '../../stores/kanban';
+import autoAnimate from '@formkit/auto-animate';
 
 const Board = ({ children, boardData }: { children: React.ReactNode, boardData: BoardInterface }) => {
 
@@ -7,6 +8,8 @@ const Board = ({ children, boardData }: { children: React.ReactNode, boardData: 
     const [editorState] = editor;
     const [showAddTask, setShowAddTask] = React.useState(false);
     const [newTask, setNewTask] = React.useState({ title: '' });
+
+    const parent = React.useRef<HTMLDivElement>(null);
 
     const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -20,13 +23,22 @@ const Board = ({ children, boardData }: { children: React.ReactNode, boardData: 
 
     const submitTask = () => {
         if (!newTask.title) return alert('Task title is required');
-
         const id = Math.floor(Math.random() * 1000);
         const payload = { id, ...newTask };
-        addTask(boardData.id, { ...payload, status: boardData.name });
+        const activity = {
+            id: Math.floor(Math.random() * 1000),
+            title: `Task created`,
+            description: `Task ${id} created in ${boardData.name}`,
+            date: new Date().toISOString(),
+        }
+        addTask(boardData.id, { ...payload, status: boardData.name, activity: [activity] });
         setNewTask({ title: '' });
         setShowAddTask(false);
     }
+
+    React.useEffect(() => {
+        parent.current && autoAnimate(parent.current);
+    }, [parent]);
 
     return (
         <div
@@ -36,7 +48,7 @@ const Board = ({ children, boardData }: { children: React.ReactNode, boardData: 
             <div className='board-header'>
                 <div className='title'>{boardData.name}</div>
             </div>
-            <div className='board-body'>
+            <div ref={parent} className='board-body'>
                 {children}
 
                 {showAddTask && (
