@@ -5,6 +5,11 @@
     padding: 10px;
     justify-content: space-between;
     align-items: center;
+    height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 
     .logo{
         font-size: 18px;
@@ -94,7 +99,11 @@
 }
 
 main{
-    padding: 20px;
+    margin-top: 80px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
     &::before {
         content: "";
@@ -122,4 +131,22 @@ main{
     .py-#{$i} { padding-top: #{$i*.5}rem; padding-bottom: #{$i*.5}rem; }
     .px-#{$i} { padding-left: #{$i*.5}rem; padding-right: #{$i*.5}rem; }
     .gap-#{$i} { gap: #{$i *.5}rem; }
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+  
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bebebe; 
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #858585; 
 }

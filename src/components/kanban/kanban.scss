@@ -1,84 +1,150 @@
-.kanban-container{
-    
-    // Kanban Header
-    .kanban-header{
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        height: 50px;
+// Kanban Header
+.kanban-header{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    height: 50px;
+    padding: 1rem;
 
-        .title, .org {
-            font-size: 18px;
-            font-weight: 700;
-            background-color: rgba(255, 255, 255, 0.212);
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
+    .title {
+        font-size: 18px;
+        font-weight: 700;
+        background-color: rgba(255, 255, 255, 0.212);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .btn-transparent {
+        font-size: 18px;
+        font-weight: 700;
+        background-color: rgba(255, 255, 255, 0.212);
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.3);
         }
     }
+}
+
+.kanban-container{
+    flex: 1;
+    overflow-y: hidden;
+    overflow-x: auto;
+    padding: 1rem;
 
     .kanban-body{
         display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
         align-items: flex-start;
     }   
 }   
 
-.board-container {
-    padding: 1rem;
-    background-color: rgb(247, 252, 255);
+.board-wrapper{
     flex: 0 0 20%;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    padding-right: 1rem;
 
-    .board-header {
-
-        .title {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-    }
-
-    .board-body {
+    .board-container {
+        padding: 1rem;
+        background-color: rgb(247, 252, 255);
+        border-radius: 5px;
         display: flex;
         flex-direction: column;
-        gap: .5rem
-    }
-
-    .board-footer {
-        margin-top: auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .add-task {
+        gap: 1rem;
+        position: relative;
+    
+        .close {
             border: none;
             background-color: transparent;
             cursor: pointer;
-            width: 100%;
-            text-align: left;
+            font-size: 24px;
             color: gray;
-            padding: 0;
-            font-size: 16px;
-
-            &.submit {
-                background-color: #0079bf;
-                width: auto;
-                color: white;
-                padding: .5rem 1rem;
-                border-radius: 5px;
-                margin-right: 1rem;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    
+        .board-header {
+    
+            .title {
+                font-size: 18px;
+                font-weight: 600;
             }
-
-            &.cancel {
-                color: #0079bf;
+    
+            .input-title {
+    
+                display: flex;
+                gap: .5rem;
+                align-items: center;
+    
+                input {
+                    padding: 0;
+                    font-size: 18px;
+                    font-weight: 600;
+                    outline: none;
+                    border-radius: 5px;
+                    border: 1px solid rgba(9, 30, 66, 0.13);
+                    height: 40px;
+                    padding: 0 1rem;
+                }
+    
+                button {
+                    border: none;
+                    background-color: #0079bf;
+                    color: white;
+                    padding: .5rem 1rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+                    height: 40px;
+    
+                    &:hover {
+                        background-color: #005a8d;
+                    }
+                }
+            }
+    
+        }
+    
+        .board-body {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem
+        }
+    
+        .board-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+    
+            .add-task {
+                border: none;
+                background-color: transparent;
+                cursor: pointer;
+                width: 100%;
+                text-align: left;
+                color: gray;
+                padding: 0;
+                font-size: 16px;
+    
+                &.submit {
+                    background-color: #0079bf;
+                    width: auto;
+                    color: white;
+                    padding: .5rem 1rem;
+                    border-radius: 5px;
+                    margin-right: 1rem;
+                }
+    
+                &.cancel {
+                    color: #0079bf;
+                }
             }
         }
-    }
+    }    
 }
 
 .task-container {

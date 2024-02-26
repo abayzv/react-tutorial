@@ -44,6 +44,7 @@ interface Editor {
 }
 
 interface KanbanContext {
+    project: [Kanban[], React.Dispatch<React.SetStateAction<Kanban[]>>];
     kanban: [Kanban, React.Dispatch<React.SetStateAction<Kanban>>];
     detail: [Task, React.Dispatch<React.SetStateAction<Task>>];
     editor: [Editor, React.Dispatch<React.SetStateAction<Editor>>];
@@ -60,6 +61,9 @@ interface KanbanContext {
     resetDetail: () => void;
     updateTask: () => void;
     editLabelOnTask: (label: Labels, isEnable: boolean) => void;
+    duplicateTask: (boardId: number, taskId: number) => void;
+    getBoardByTaskId: (taskId: number) => Board;
+    updateBoard: (board: Board) => void;
 }
 
 export const KanbanContext: React.Context<KanbanContext> = React.createContext({} as KanbanContext);
@@ -144,6 +148,7 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         }
     ];
 
+    const [project, setProject] = useLocalStorage('project', [kanbanData]) as [Array<Kanban>, React.Dispatch<React.SetStateAction<Array<Kanban>>>];
     const [labels, setLabels] = useLocalStorage('labels', labelsData) as [Array<Labels>, React.Dispatch<React.SetStateAction<Array<Labels>>>];
     const [kanban, setKanban] = useLocalStorage('kanban', kanbanData) as [Kanban, React.Dispatch<React.SetStateAction<Kanban>>];
     const [detail, setDetail] = React.useState({ id: 0, title: '', description: '', status: '', activity: [], labels: [] } as Task);
@@ -154,6 +159,15 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
     }
     const deleteBoard = (boardId: number) => {
         setKanban({ ...kanban, boards: kanban.boards.filter(board => board.id !== boardId) });
+    }
+    const updateBoard = (board: Board) => {
+        const newBoards = kanban.boards.map(b => {
+            if (b.id === board.id) {
+                return board;
+            }
+            return b;
+        });
+        setKanban({ ...kanban, boards: newBoards });
     }
     const addTask = (boardId: number, task: Task) => {
         const newBoards = kanban.boards.map(board => {
@@ -220,6 +234,13 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
                 setKanban({ ...kanban, boards: newBoards });
             }
         }
+    }
+    const duplicateTask = (boardId: number, taskId: number) => {
+        const task = getTaskDetail(taskId);
+        if (task.id === 0) return;
+
+        const newTask = { ...task, id: Math.floor(Math.random() * 1000) };
+        addTask(boardId, newTask);
     }
     const addEmptyTask = (boardId: number, index: number) => {
         const emptyTask: Task = { id: 0, title: '', description: '', status: '' };
@@ -320,7 +341,6 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
 
         setKanban({ ...kanban, boards });
     }
-
     const updateTaskItem = (task: Task) => {
         const boards = kanban.boards;
 
@@ -335,7 +355,6 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
 
         setKanban({ ...kanban, boards });
     }
-
     const editLabelOnTask = (label: Labels, isEnable: boolean) => {
         const task = { ...detail };
         if (isEnable) {
@@ -350,8 +369,23 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         setDetail(task);
         updateTaskItem(task);
     }
+    const getBoardByTaskId = (taskId: number) => {
+        const boards = kanban.boards;
+        for (let i = 0; i < boards.length; i++) {
+            const tasks = boards[i].tasks;
+            for (let j = 0; j < tasks.length; j++) {
+                if (tasks[j].id === taskId) {
+                    return boards[i];
+                }
+            }
+        }
+
+        return {} as Board;
+    }
+    const addProject = (project: Kanban) => { }
 
     const storeKanban: KanbanContext = {
+        project: [project, setProject],
         kanban: [kanban, setKanban],
         labels: [labels, setLabels],
         detail: [detail, setDetail],
@@ -367,7 +401,10 @@ export const KanbanProvider = ({ children }: { children: React.ReactNode }) => {
         getTaskDetail,
         resetDetail,
         updateTask,
-        editLabelOnTask
+        editLabelOnTask,
+        duplicateTask,
+        getBoardByTaskId,
+        updateBoard
     }
 
     return (

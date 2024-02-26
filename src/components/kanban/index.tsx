@@ -15,6 +15,7 @@ import { RiAttachment2 } from "react-icons/ri";
 import { IoDuplicate } from "react-icons/io5";
 import Dropdown from "../dropdown/dropdown";
 import ManageLabels from "../kanban/manageLabels";
+import autoAnimate from '@formkit/auto-animate';
 
 const styles = {
     select: {
@@ -34,13 +35,15 @@ const formatDate = (date: string) => {
 }
 
 const Kanban = () => {
-    const { kanban, detail, getTaskDetail, resetDetail, updateTask, moveTask, labels } = React.useContext(KanbanContext);
+    const { kanban, detail, getTaskDetail, resetDetail, updateTask, moveTask, labels, duplicateTask, deleteTask, getBoardByTaskId, addBoard } = React.useContext(KanbanContext);
 
     const [labelState] = labels;
     const [kanbanState] = kanban;
     const [detailState, setDetailState] = detail;
     const { boards } = kanbanState;
     const [showModal, setShowModal] = React.useState(false);
+
+    const parent = React.useRef<HTMLDivElement>(null);
 
     const moveTaskTo = (boardId: number) => {
         console.log('move task to', boardId);
@@ -117,6 +120,24 @@ const Kanban = () => {
         )
     }
 
+    const renderDuplicateTo = () => {
+        return (
+            <>
+                <div>Duplicate task to</div>
+                <select style={styles.select} onChange={(e) => duplicateTask(parseInt(e.target.value), detailState.id)}>
+                    <option value={0}>Select Board</option>
+                    {boards.map((board, index) => {
+                        return (
+                            <option key={index} value={board.id}>
+                                {board.name}
+                            </option>
+                        );
+                    })}
+                </select>
+            </>
+        )
+    }
+
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDetailState({ ...detailState, description: e.target.value });
     }
@@ -130,19 +151,25 @@ const Kanban = () => {
         if (detailState.id !== 0) {
             setShowModal(true);
         }
-    }, [detailState]);
+
+        parent.current && autoAnimate(parent.current);
+
+    }, [detailState, parent]);
 
     return (
         <>
+            <div className="kanban-header">
+                <div className="title">{kanbanState.name}</div>
+                <div className="btn-transparent" onClick={() => {
+                    addBoard({ id: Math.floor(Math.random() * 1000), name: 'New Board', tasks: [] });
+                }}>+</div>
+            </div>
             <div className="kanban-container">
-                <div className="kanban-header">
-                    <div className="title">{kanbanState.name}</div>
-                    <div className="org">Mahesadev</div>
-                </div>
-                <div className="kanban-body">
+                <div ref={parent} className="kanban-body">
                     {renderBoards()}
                 </div>
             </div>
+
             <Modal isOpen={showModal} onClose={onModalClose}>
                 <div style={{ display: 'flex', gap: '1.5rem', flex: 1 }}>
                     <div className="task-detail">
@@ -186,7 +213,10 @@ const Kanban = () => {
                         </div>
                     </div>
                     <div className="task-sidebar">
-                        <button className="btn"><FaTrash /> Delete</button>
+                        <button className="btn" style={{ backgroundColor: '#ff5d52' }} onClick={() => {
+                            deleteTask(getBoardByTaskId(detailState.id).id, detailState.id);
+                            onModalClose();
+                        }}><FaTrash /> Delete</button>
 
                         {/* Move To */}
                         <Dropdown className="btn" title="Move To" icon={<ImBoxRemove />}>
@@ -199,7 +229,11 @@ const Kanban = () => {
                         </Dropdown>
 
                         <button className="btn"><RiAttachment2 /> Attachments</button>
-                        <button className="btn"><IoDuplicate /> Duplicate</button>
+
+                        {/* Duplicate */}
+                        <Dropdown className="btn" title="Duplicate" icon={<IoDuplicate />}>
+                            {renderDuplicateTo()}
+                        </Dropdown>
                     </div>
                 </div>
             </Modal>

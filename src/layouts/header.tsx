@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { MdOutlineDashboard } from "react-icons/md";
-import { FaGoogle, FaFacebook, FaYoutube, FaClock, FaSteam } from "react-icons/fa";
+import { FaGoogle, FaFacebook, FaYoutube, FaClock, FaSteam, FaEnvelope } from "react-icons/fa";
 
 const style = {
     'flex-center': {
@@ -65,6 +65,12 @@ const Header = () => {
                         <a href='https://google.com' className='red'>
                             <FaGoogle />
                         </a>
+
+                        {/* Gmail */}
+                        <a href='https://mail.google.com/mail/u/0/#inbox' className='green'>
+                            <FaEnvelope />
+                        </a>
+
                         {/* Facebook */}
                         <a href='https://facebook.com' className='blue'>
                             <FaFacebook />
@@ -80,7 +86,7 @@ const Header = () => {
                     </div>
 
                     {/* Time */}
-                    <div className='time'><FaClock /> {time !== '' ? time : '00:00:00'}</div>
+                    <div className='time' style={{ width: '100px' }}><FaClock /> {time !== '' ? time : '00:00:00'}</div>
                 </div>
             </div>
         </header>

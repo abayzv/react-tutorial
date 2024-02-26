@@ -47,15 +47,17 @@ const Task = ({ taskData, boardId, index }: { taskData: TaskInterface, boardId: 
             onDragEnd={dragEnd}
             onDragOver={dragOver}
         >
-            <button className="delete-task" onClick={() => deleteTask(boardId, taskData.id)}>x</button>
-            <div className="task-label">
-                {taskData.labels?.map((label, index) => {
-                    return (
-                        <div key={index} className="task-label-item" style={{ backgroundColor: getLabel(label)?.color }}></div>
-                    )
-                })}
-            </div>
-            <div className="mt-1">{taskData.title} {isDragging ? '👀' : ''}</div>
+            {/* <button className="delete-task" onClick={() => deleteTask(boardId, taskData.id)}>x</button> */}
+            {taskData.labels && (
+                <div className="task-label mb-1">
+                    {taskData.labels.map((label, index) => {
+                        return (
+                            <div key={index} className="task-label-item" style={{ backgroundColor: getLabel(label)?.color }}></div>
+                        )
+                    })}
+                </div>
+            )}
+            <div>{taskData.title} {isDragging ? '👀' : ''}</div>
             <div className="description">{taskData.description}</div>
         </div>
     )
